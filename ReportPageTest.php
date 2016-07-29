@@ -35,9 +35,12 @@
         
         // Die Funktion drawVisualization wird aufgerufen wenn die API funktionsbereit ist
         google.setOnLoadCallback(drawVisualization);
-        
-        var a = <?php echo $num1; ?>; // Daten aus php in Variable speichern
-        var b = <?php echo $num2; ?>; 
+
+        var passedTotal = 0;
+        var failedTotal = 0;
+        passedTotal = <?php echo $passedCount ?>; // Daten aus php in Variable speichern
+        failedTotal = <?php echo $failedCount ?>;
+
         function drawVisualization() {
     
         // In der Variable options wird ein assoziatives Array mit den Einstellungen gespeichert.
@@ -51,8 +54,8 @@
         data.addColumn('string', 'Result');
         data.addColumn('number', 'Anteil (in %)');
         data.addRows([
-          ['Passed'     , a],
-          ['Failed', b],
+          [passedTotal + ' Passed', passedTotal],
+          [failedTotal + ' Failed', failedTotal],
           ['Untested'  , 0.0],
           ['Retested' , 0.0],
         ]);
@@ -113,17 +116,6 @@
 
                 <div class="row">                
                     <div class="col-lg-6">
-                        <form role="form">
-                            <div class="form-group">
-                                <label for="disabledSelect">Tested Application
-                                <select id="disabledSelect" class="form-control">
-                                    <option>Client Portal</option>
-                                    <option>CMP</option>
-                                    <option>ServiceBank</option>
-                                </select>
-                                </label>
-                            </div>
-                        </form>
 
                         <!--Pie Chart-->
                         <div id="result-pie-chart" style="width: 700; height: 400px";></div>
@@ -140,30 +132,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="success">
-                                        <td>Scenario: Search for an active employee</td>
-                                        <td>Selenium</td>
-                                        <td>High</td>
-                                        <td>Passed</td>
-                                    </tr>
-                                    <tr class="success">
-                                        <td>Scenario: Create new Roadshow</td>
-                                        <td>Selenium</td>
-                                        <td>High</td>
-                                        <td>Passed</td>
-                                    </tr>
-                                    <tr class="success">
-                                        <td>Scenario: Search for a team</td>
-                                        <td>Selenium</td>
-                                        <td>High</td>
-                                        <td>Passed</td>
-                                    </tr>
-                                    <tr class="danger">
-                                        <td>Scenario: Click all links</td>
-                                        <td>Selenium</td>
-                                        <td>High</td>
-                                        <td>Failed</td>
-                                    </tr>
+                                    <?php
+                                        printTable();
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
