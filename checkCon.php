@@ -55,3 +55,4 @@ function printTable(){
 echo "<table>";
 printTable();
 echo "</table>";
+echo "TEST";
