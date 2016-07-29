@@ -47,7 +47,7 @@
         var options = {'title':'',
                         is3D: true,
                         colors: ['#33cc33', '#ff3300', '#CCCCCC', '#e6e600'],
-                        chartArea:{left:20,top:20,width:'100%',height:'80%'}};
+                        chartArea:{left:20,top:20,width:'50%',height:'80%'}};
         
         // In der Variable data werden die Daten als DataTable gespeichert
         var data = new google.visualization.DataTable();
@@ -115,7 +115,7 @@
 
 
                 <div class="row">                
-                    <div class="col-lg-6">
+                    <div class="col-lg-12">
 
                         <!--Pie Chart-->
                         <div id="result-pie-chart" style="width: 700; height: 400px";></div>

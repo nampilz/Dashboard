@@ -23,7 +23,7 @@ if (mysqli_connect_errno()) {
     exit();
 }
 
-$sql = "SELECT * FROM TESTREPORTING WHERE `TESTED_APPLICATION` = \"CMP\"";
+$sql = "SELECT * FROM TESTREPORTING WHERE `TESTED_APPLICATION` = \"Client Portal\"";
 $result = mysqli_query($con, $sql);
 
 function printTable(){
