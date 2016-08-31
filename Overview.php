@@ -44,7 +44,7 @@
                 </button>
                 <a class="navbar-brand" href="Overview.php">QA Reporting System</a>
             </div>
-           
+
             <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
@@ -52,7 +52,16 @@
                         <a href="Overview.php"><i class="fa fa-fw fa-dashboard"></i> Overview</a>
                     </li>
                     <li>
-                        <a href="ReportPageTest.php"><i class="fa fa-fw fa-bar-chart-o"></i> Reports</a>
+                        <a href="AppOverview.php?title=CMP"><i class="fa fa-fw fa-bar-chart-o"></i> CMP</a>
+                    </li>
+                    <li>
+                        <a href="AppOverview.php?title=Client Portal"><i class="fa fa-fw fa-bar-chart-o"></i> Client Portal</a>
+                    </li>
+                    <li>
+                        <a href="AppOverview.php?title=Service Bank"><i class="fa fa-fw fa-bar-chart-o"></i> Service Bank</a>
+                    </li>
+                    <li>
+                        <a href="AppOverview.php?title=Tosca"><i class="fa fa-fw fa-bar-chart-o"></i> Tosca</a>
                     </li>
                 </ul>
             </div>

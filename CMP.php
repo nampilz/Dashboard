@@ -131,22 +131,22 @@
                                 <td><h5>Tester</h5></td>
                             </tr>
                             <tr>
-                                <td><a href="ReportPageTest.php">CMP Sprint 1</a></td>
+                                <td><a href="TestReportPage.php">CMP Sprint 1</a></td>
                                 <td>27.08.2016</td>
                                 <td>Tester</td>
                             </tr>
                             <tr>
-                                <td><a href="ReportPageTest.php">CMP Sprint 2</a></td>
+                                <td><a href="TestReportPage.php">CMP Sprint 2</a></td>
                                 <td>28.08.2016</td>
                                 <td>Tester</td>
                             </tr>
                             <tr>
-                                <td><a href="ReportPageTest.php">CMP Sprint 3</a></td>
+                                <td><a href="TestReportPage.php">CMP Sprint 3</a></td>
                                 <td>29.08.2016</td>
                                 <td>Tester</td>
                             </tr>
                             <tr>
-                                <td><a href="ReportPageTest.php">CMP Sprint 4</a></td>
+                                <td><a href="TestReportPage.php">CMP Sprint 4</a></td>
                                 <td>30.08.2016</td>
                                 <td>Tester</td>
                             </tr>

@@ -6,7 +6,8 @@ $user="root";
 $password="";
 $db = "GlobalDB";
 $labelColor="";
-
+$today = date("Y-m-d");
+$pastNineDaysFromToday = date("Y-m-d", strtotime("-10 days"));
 /* Connect to DB */
 $con=mysqli_connect($host,$user,$password, $db);
 
@@ -19,56 +20,77 @@ if (mysqli_connect_errno()) {
 /* Get data from DB */
 $sqlGetApplicationData = "SELECT DISTINCT TESTRUN_NAME, TESTED_ON, TESTER FROM TESTREPORTING WHERE TESTED_APPLICATION ='".$title."' ORDER BY TESTED_ON DESC";
 $res = mysqli_query($con, $sqlGetApplicationData);
-$res2 = mysqli_query($con, $sqlGetApplicationData);
 
 /* Get data from DB for line chart */
-$sqlDataForChartPassed = "SELECT COUNT(RESULT) AS COUNTER, TESTED_ON FROM TESTREPORTING WHERE RESULT = '"."Passed"."'AND TESTED_APPLICATION = '".$title."' GROUP BY TESTED_ON DESC";
+$sqlDataForChartPassed = "SELECT COUNT(RESULT) AS COUNTER, TESTED_ON FROM TESTREPORTING WHERE RESULT = '"."Passed"."'AND TESTED_APPLICATION = '".$title."' AND TESTED_ON BETWEEN '".$pastNineDaysFromToday."' AND '".$today."' GROUP BY TESTED_ON DESC";
 $dataForChartPassed = mysqli_query($con, $sqlDataForChartPassed);
 
-/* Get number of testcases */
-$sqlCountTestCases = "SELECT COUNT(RESULT) AS COUNTER, TESTED_ON FROM TESTREPORTING WHERE TESTED_APPLICATION = '".$title."' GROUP BY TESTED_ON DESC";
+/* Get number of test cases */
+$sqlCountTestCases = "SELECT COUNT(RESULT) AS COUNTER, TESTED_ON FROM TESTREPORTING WHERE TESTED_APPLICATION = '".$title."' AND TESTED_ON BETWEEN '".$pastNineDaysFromToday."' AND '".$today."' GROUP BY TESTED_ON DESC";
 $countTestCases = mysqli_query($con, $sqlCountTestCases);
 
 /* Close DB connection */
 mysqli_close($con);
 
-/* Data for the line chart */
-$dateRow = array();
-while($r = $res2->fetch_assoc()) {
-    $dateRow[] = $r['TESTED_ON'];
-}
+/* Date for the line chart (for the last past 10 days)*/
+$dateRow = array(
+    date("Y-m-d"),
+    date("Y-m-d", strtotime("-1 days")),
+    date("Y-m-d", strtotime("-2 days")),
+    date("Y-m-d", strtotime("-3 days")),
+    date("Y-m-d", strtotime("-4 days")),
+    date("Y-m-d", strtotime("-5 days")),
+    date("Y-m-d", strtotime("-6 days")),
+    date("Y-m-d", strtotime("-7 days")),
+    date("Y-m-d", strtotime("-8 days")),
+    date("Y-m-d", strtotime("-9 days"))
+);
 
-/* Save number of testcases of each test run in an array */
+/* Save total number of test cases of each test run in an array */
 $countTestCasesArray = array();
-while($r = $countTestCases->fetch_assoc()) {
-    $countTestCasesArray[] = $r['COUNTER'];
-}
-
-/* Get the number of passed and failed testcases */
-$numberFailed = array();
-$numberPassed = array();
-$c = 0;
-while($r = $dataForChartPassed->fetch_assoc()) {
-    $numberPassed[] = $r['COUNTER'];
-    $numberFailed[] = $countTestCasesArray[0] - $r['COUNTER']; // Number of Failed = total - number of passed
-    $c = $c+1;
+while($row = $countTestCases->fetch_assoc()) {
+    $countTestCasesArray[] = $row;
 }
 
 
-/* Function to print the report table */
+/*
+ * Get the number of passed and failed test cases
+ * Find the right date for passed and failed and add it to the arrays
+*/
+$numberFailed = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+$numberPassed = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+while($rowPassed = $dataForChartPassed->fetch_assoc()) {
+    for($i = 0; $i < count($dateRow); $i++){
+        if($dateRow[$i] == $rowPassed['TESTED_ON']){
+            $numberPassed[$i] = $rowPassed['COUNTER'];
+            for($q = 0; $q < count($countTestCasesArray); $q++){
+                if($dateRow[$i] == $countTestCasesArray[$q]['TESTED_ON']){
+                    $numberFailed[$i] = $countTestCasesArray[$q]['COUNTER'] - $rowPassed['COUNTER'];
+                }
+            }
+        }
+    }
+}
+
+
+/**
+ * Function to print the report table
+ */
 function printReportTable()
 {
     global $res;
     global $title;
     while ($row = $res->fetch_assoc()) {
         echo "<tr>";
-        echo "<td>", "<a href='ReportPageTest.php?testrun=".$row['TESTRUN_NAME']."&title=".$title."'>",$row['TESTRUN_NAME'],"</a>", "</td>";
+        echo "<td>", "<a href='TestReportPage.php?testrun=".$row['TESTRUN_NAME']."&title=".$title."'>",$row['TESTRUN_NAME'],"</a>", "</td>";
         echo "<td>", $row['TESTED_ON'], "</td>";
         echo "<td>", $row['TESTER'], "</td>";
         echo "</tr>";
     }
 }
 
+/*  Switch-case to set the color of the line chart */
 switch ($title) {
     case "CMP":
         $labelColor="primary";
@@ -140,7 +162,16 @@ switch ($title) {
                     <a href="Overview.php"><i class="fa fa-fw fa-dashboard"></i> Overview</a>
                 </li>
                 <li>
-                    <a href="ReportPage.php"><i class="fa fa-fw fa-bar-chart-o"></i> Reports</a>
+                    <a href="AppOverview.php?title=CMP"><i class="fa fa-fw fa-bar-chart-o"></i> CMP</a>
+                </li>
+                <li>
+                    <a href="AppOverview.php?title=Client Portal"><i class="fa fa-fw fa-bar-chart-o"></i> Client Portal</a>
+                </li>
+                <li>
+                    <a href="AppOverview.php?title=Service Bank"><i class="fa fa-fw fa-bar-chart-o"></i> Service Bank</a>
+                </li>
+                <li>
+                    <a href="AppOverview.php?title=Tosca"><i class="fa fa-fw fa-bar-chart-o"></i> Tosca</a>
                 </li>
             </ul>
         </div>
@@ -240,7 +271,6 @@ switch ($title) {
             { datum: '<?php echo $dateRow[7] ?>', passed: <?php echo $numberPassed[7]?>, failed: <?php echo $numberFailed[7]?> },
             { datum: '<?php echo $dateRow[8] ?>', passed: <?php echo $numberPassed[8]?>, failed: <?php echo $numberFailed[8]?> },
             { datum: '<?php echo $dateRow[9] ?>', passed: <?php echo $numberPassed[9]?>, failed: <?php echo $numberFailed[9]?> },
-
         ],
         xkey: 'datum',
         ykeys: ['passed', 'failed'],

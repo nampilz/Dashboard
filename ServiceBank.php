@@ -121,7 +121,7 @@
                 <!-- List of test runs -->
                 <div class="col-lg-12">
                     <li>
-                        <a href="ReportPageTest.php">Service Bank Sprint 1</a>
+                        <a href="TestReportPage.php">Service Bank Sprint 1</a>
                     </li>
                 </div>
             </div>

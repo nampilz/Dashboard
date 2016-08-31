@@ -9,9 +9,10 @@ $failedCount = 0;
 $testrunName = $_GET["testrun"];
 $title = $_GET["title"];
 
+/* Connect to db */
 $con=mysqli_connect($host,$user,$password, $db);
 
-/* check connection */
+/* Check connection */
 if (mysqli_connect_errno()) {
     printf("Connect failed: %s\n", mysqli_connect_error());
     exit();
@@ -21,9 +22,11 @@ $sql = "SELECT * FROM TESTREPORTING WHERE TESTED_APPLICATION ='".$title."'"." AN
 $result = mysqli_query($con, $sql);
 $result2 = mysqli_query($con, $sql);
 
-/**
- *
- */
+/* Close connection */
+mysqli_close($con);
+
+
+/* Count the total number of passed and failed test cases for the pie chart*/
 while($row = $result->fetch_assoc()) {
     if ($row['RESULT'] == 'Passed') {
         $passedCount = $passedCount + 1;
@@ -32,10 +35,8 @@ while($row = $result->fetch_assoc()) {
     }
 }
 
-mysqli_close($con);
-
 /**
- *
+ * This function prints a table with all the test cases of the test run
  */
 function printTable(){
     global $result2;
@@ -89,23 +90,23 @@ function printTable(){
         // Visualization-API mit dem Paket 'corechart' laden.
         google.load('visualization', '1.0', {'packages':['corechart']});
         
-        // Die Funktion drawVisualization wird aufgerufen wenn die API funktionsbereit ist
+        // The function drawVisualization is called when the API is ready
         google.setOnLoadCallback(drawVisualization);
 
         var passedTotal = 0;
         var failedTotal = 0;
-        passedTotal = <?php echo $passedCount ?>; // Daten aus php in Variable speichern
+        passedTotal = <?php echo $passedCount ?>; // Save data from php in variables
         failedTotal = <?php echo $failedCount ?>;
 
         function drawVisualization() {
-    
-        // In der Variable options wird ein assoziatives Array mit den Einstellungen gespeichert.
+
+        // The variable options saved an array with the configurations
         var options = {'title':'',
                         is3D: true,
                         colors: ['#33cc33', '#ff3300', '#CCCCCC', '#e6e600'],
                         chartArea:{left:20,top:20,width:'50%',height:'80%'}};
-        
-        // In der Variable data werden die Daten als DataTable gespeichert
+
+        // The variable data saved the data as a DataTable
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Result');
         data.addColumn('number', 'Anteil (in %)');
@@ -116,7 +117,7 @@ function printTable(){
           ['Retested' , 0.0],
         ]);
 
-        // Erstellen und Zeichnen des Diagramms
+        // Create and draw the diagram
         var chart = new google.visualization.PieChart(document.getElementById('result-pie-chart'));
         chart.draw(data, options);
         }
@@ -148,7 +149,16 @@ function printTable(){
                         <a href="Overview.php"><i class="fa fa-fw fa-dashboard"></i> Overview</a>
                     </li>
                     <li>
-                        <a href="ReportPage.php"><i class="fa fa-fw fa-bar-chart-o"></i> Reports</a>
+                        <a href="AppOverview.php?title=CMP"><i class="fa fa-fw fa-bar-chart-o"></i> CMP</a>
+                    </li>
+                    <li>
+                        <a href="AppOverview.php?title=Client Portal"><i class="fa fa-fw fa-bar-chart-o"></i> Client Portal</a>
+                    </li>
+                    <li>
+                        <a href="AppOverview.php?title=Service Bank"><i class="fa fa-fw fa-bar-chart-o"></i> Service Bank</a>
+                    </li>
+                    <li>
+                        <a href="AppOverview.php?title=Tosca"><i class="fa fa-fw fa-bar-chart-o"></i> Tosca</a>
                     </li>
                 </ul>
             </div>
