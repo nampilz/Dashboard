@@ -17,27 +17,38 @@ if (mysqli_connect_errno()) {
 }
 
 /* Get data from DB */
-$sqlGetApplicationData = "SELECT DISTINCT TESTRUN_NAME, TESTED_ON, TESTER FROM TESTREPORTING WHERE TESTED_APPLICATION ='".$title."'";
+$sqlGetApplicationData = "SELECT DISTINCT TESTRUN_NAME, TESTED_ON, TESTER FROM TESTREPORTING WHERE TESTED_APPLICATION ='".$title."' ORDER BY TESTED_ON DESC";
 $res = mysqli_query($con, $sqlGetApplicationData);
 $res2 = mysqli_query($con, $sqlGetApplicationData);
 
 /* Get data from DB for line chart */
-$sqlDataForChart = "SELECT COUNT(RESULT) AS COUNTER, TESTED_ON FROM TESTREPORTING WHERE RESULT = '"."Passed"."' GROUP BY TESTED_ON";
-$dataForChart = mysqli_query($con, $sqlDataForChart);
+$sqlDataForChartPassed = "SELECT COUNT(RESULT) AS COUNTER, TESTED_ON FROM TESTREPORTING WHERE RESULT = '"."Passed"."'AND TESTED_APPLICATION = '".$title."' GROUP BY TESTED_ON DESC";
+$dataForChartPassed = mysqli_query($con, $sqlDataForChartPassed);
+
+$sqlDataForChartFailed = "SELECT COUNT(RESULT) AS COUNTER, TESTED_ON FROM TESTREPORTING WHERE RESULT = '"."Failed"."'AND TESTED_APPLICATION = '".$title."' GROUP BY TESTED_ON DESC";
+$dataForChartFailed = mysqli_query($con, $sqlDataForChartFailed);
 
 /* Close DB connection */
 mysqli_close($con);
 
-$rows = array();
+/* Data for the line chart */
+$dateRow = array();
 while($r = $res2->fetch_assoc()) {
-$rows[] = $r['TESTED_ON'];
+    $dateRow[] = $r['TESTED_ON'];
 }
 
-$rows2 = array();
-while($r = $dataForChart->fetch_assoc()) {
-    $rows2[] = $r;
+$dataPassed = array();
+while($r = $dataForChartPassed->fetch_assoc()) {
+    $dataPassed[] = $r['COUNTER'];
 }
 
+$dataFailed = array();
+while($r = $dataForChartFailed->fetch_assoc()) {
+    $dataFailed[] = $r['COUNTER'];
+}
+
+
+/* Function to print the report table */
 function printReportTable()
 {
     global $res;
@@ -186,8 +197,6 @@ switch ($title) {
                     </table>
                 </div>
             </div>
-<?php print_r($rows[1]) ?>
-                <?php print_r($rows2[0]['COUNTER']) ?>
         </div>
         <!-- /.container-fluid -->
 
@@ -212,9 +221,10 @@ switch ($title) {
         element: 'morris_line_chart',
         // Chart data records -- each entry in this array corresponds to a point on
         // the chart.
+
         data: [
-            { datum: '<?php echo $rows[0] ?>', passed: 20, failed: 0 },
-            { datum: '<?php echo $rows[1] ?>', passed: 10, failed: 10 },
+            { datum: '<?php echo $dateRow[0] ?>', passed: <?php echo $dataPassed[0]?>, failed: <?php echo $dataFailed[0]?> },
+            { datum: '<?php echo $dateRow[1] ?>', passed: <?php echo $dataPassed[1]?>, failed: <?php echo $dataFailed[1]?> },
         ],
         xkey: 'datum',
         ykeys: ['passed', 'failed'],
