@@ -24,7 +24,7 @@ if (mysqli_connect_errno()) {
 }
 
 //Distinct oder Group By -> Datum
-$sql = "SELECT * FROM TESTREPORTING WHERE `TESTED_APPLICATION` = \"Client Portal\"";
+$sql = "SELECT * FROM TESTREPORTING WHERE `TESTED_APPLICATION` = \"CMP\"";
 $result = mysqli_query($con, $sql);
 
 function printTable(){

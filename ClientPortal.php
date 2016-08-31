@@ -114,9 +114,16 @@
                 <div class="row">
                     <div class="col-lg-12">
 
-                        <!--Line Chart-->
+                        <!-- Line Chart -->
                         <div id="linechart_material"></div>
                         <hr>
+                    </div>
+
+                    <!-- List of test runs -->
+                    <div class="col-lg-12">
+                        <li>
+                            <a href="ReportPageTest.php">Client Portal Sprint 1</a>
+                        </li>
                     </div>
                 </div>
 

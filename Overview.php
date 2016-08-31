@@ -52,7 +52,7 @@
                         <a href="Overview.php"><i class="fa fa-fw fa-dashboard"></i> Overview</a>
                     </li>
                     <li>
-                        <a href="ReportPage.php"><i class="fa fa-fw fa-bar-chart-o"></i> Reports</a>
+                        <a href="ReportPageTest.php"><i class="fa fa-fw fa-bar-chart-o"></i> Reports</a>
                     </li>
                 </ul>
             </div>
@@ -82,7 +82,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="CMP.php">
+                            <a href="AppOverview.php?title=CMP">
                                 <div class="panel-footer">
                                     <span class="pull-left">View</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -100,7 +100,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="ClientPortal.php">
+                            <a href="AppOverview.php?title=Client Portal">
                                 <div class="panel-footer">
                                     <span class="pull-left">View</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -118,7 +118,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="ServiceBank.php">
+                            <a href="AppOverview.php?title=Service Bank">
                                 <div class="panel-footer">
                                     <span class="pull-left">View</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -136,7 +136,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="Tosca.php">
+                            <a href="AppOverview.php?title=Tosca">
                                 <div class="panel-footer">
                                     <span class="pull-left">View</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>

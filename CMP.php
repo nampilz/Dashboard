@@ -1,3 +1,4 @@
+<?php include ("DBConnection.php"); ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,6 +27,43 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['line']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('number', 'Day');
+            data.addColumn('number', 'Passed');
+            data.addColumn('number', 'Failed');
+
+
+            data.addRows([
+                [1, 4, 0],
+                [2, 3, 1],
+                [3, 3, 1],
+                [4, 4, 0],
+                [5, 2, 2],
+                [6, 4, 0]
+            ]);
+
+            var options = {
+                chart: {
+                    title: 'CMP'
+                },
+                width: 1000,
+                height: 300
+            };
+
+            var chart = new google.charts.Line(document.getElementById('linechart_material'));
+
+            chart.draw(data, options);
+        }
+    </script>
+
 </head>
 
 <body>
@@ -72,6 +110,49 @@
                 </div>
             </div>
             <!-- /.row -->
+
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <!--Line Chart-->
+                    <div id="linechart_material"></div>
+                    <hr>
+                </div>
+                <!-- List of test runs -->
+                <div class="col-lg-12">
+                    <h3>Reports</h3>
+                </div>
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <tr>
+                                <td width="90%"><h5>Name</h5></td>
+                                <td width="50%"><h5>Datum</h5></td>
+                                <td><h5>Tester</h5></td>
+                            </tr>
+                            <tr>
+                                <td><a href="ReportPageTest.php">CMP Sprint 1</a></td>
+                                <td>27.08.2016</td>
+                                <td>Tester</td>
+                            </tr>
+                            <tr>
+                                <td><a href="ReportPageTest.php">CMP Sprint 2</a></td>
+                                <td>28.08.2016</td>
+                                <td>Tester</td>
+                            </tr>
+                            <tr>
+                                <td><a href="ReportPageTest.php">CMP Sprint 3</a></td>
+                                <td>29.08.2016</td>
+                                <td>Tester</td>
+                            </tr>
+                            <tr>
+                                <td><a href="ReportPageTest.php">CMP Sprint 4</a></td>
+                                <td>30.08.2016</td>
+                                <td>Tester</td>
+                            </tr>
+                    </table>
+                </div>
+            </div>
 
         </div>
         <!-- /.container-fluid -->

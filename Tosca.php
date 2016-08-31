@@ -1,3 +1,4 @@
+<?php include ("DBConnection.php"); ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,6 +27,43 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['line']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('number', 'Day');
+            data.addColumn('number', 'Passed');
+            data.addColumn('number', 'Failed');
+
+
+            data.addRows([
+                [1, 4, 0],
+                [2, 3, 1],
+                [3, 3, 1],
+                [4, 4, 0],
+                [5, 2, 2],
+                [6, 4, 0]
+            ]);
+
+            var options = {
+                chart: {
+                    title: 'Tosca'
+                },
+                width: 1000,
+                height: 300
+            };
+
+            var chart = new google.charts.Line(document.getElementById('linechart_material'));
+
+            chart.draw(data, options);
+        }
+    </script>
+
 </head>
 
 <body>
@@ -72,6 +110,21 @@
                 </div>
             </div>
             <!-- /.row -->
+
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <!--Line Chart-->
+                    <div id="linechart_material"></div>
+                    <hr>
+                </div>
+                <!-- List of test runs -->
+                <div class="col-lg-12">
+                    <li>
+                        <a href="ReportPageTest.php">Tosca Sprint 1</a>
+                    </li>
+                </div>
+            </div>
 
         </div>
         <!-- /.container-fluid -->

@@ -7,11 +7,6 @@
     $failedCount = 0;
 
     $con=mysqli_connect($host,$user,$password, $db);
-    if($con) {
-        #echo 'Connected to MySQL'.'<br />';
-    } else {
-        echo '<h1>MySQL Server is not connected</h1>';
-    }
 
     /* check connection */
     if (mysqli_connect_errno()) {
@@ -29,6 +24,7 @@
      
    # $locations =(json_encode($rows));
    # echo $locations;
+
 
     while($row = $result->fetch_assoc()) {
         if ($row['RESULT'] == 'Passed') {

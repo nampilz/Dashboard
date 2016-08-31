@@ -1,4 +1,60 @@
-<?php include ("DBConnection.php"); ?>
+
+<?php
+$host="localhost";
+$user="root";
+$password="";
+$db = "GlobalDB";
+$passedCount = 0;
+$failedCount = 0;
+$testrunName = $_GET["testrun"];
+$title = $_GET["title"];
+
+$con=mysqli_connect($host,$user,$password, $db);
+
+/* check connection */
+if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+}
+
+$sql = "SELECT * FROM TESTREPORTING WHERE TESTED_APPLICATION ='".$title."'"." AND TESTRUN_NAME = '".$testrunName."' ORDER BY FEATURE";
+$result = mysqli_query($con, $sql);
+$result2 = mysqli_query($con, $sql);
+
+/**
+ *
+ */
+while($row = $result->fetch_assoc()) {
+    if ($row['RESULT'] == 'Passed') {
+        $passedCount = $passedCount + 1;
+    } else {
+        $failedCount = $failedCount + 1;
+    }
+}
+
+mysqli_close($con);
+
+/**
+ *
+ */
+function printTable(){
+    global $result2;
+    while($row = $result2->fetch_assoc()) {
+        $classAttribute = 'danger';
+        if ($row['RESULT'] == 'Passed') {
+            $classAttribute = 'success';
+        }
+        echo "<tr class='$classAttribute'>";
+        echo "<td>",$row['TEST_NAME'],"</td>";
+        echo "<td>",$row['FEATURE'],"</td>";
+        echo "<td>",$row['ELAPSED']/100,"s","</td>";
+        echo "<td>",$row['PRIORITY'],"</td>";
+        echo "<td>",$row['RESULT'],"</td>";
+        echo "</tr>";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -65,7 +121,7 @@
         chart.draw(data, options);
         }
     </script>
-    
+
 </head>
 
 <body>
@@ -107,14 +163,17 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Test Summary
+                            Test Report
                         </h1>
+                        <h3>
+                            <?php echo $testrunName ?>
+                        </h3>
                     </div>
                 </div>
                 <!-- /.row -->
 
 
-                <div class="row">                
+                <div class="row">
                     <div class="col-lg-12">
 
                         <!--Pie Chart-->
@@ -126,7 +185,8 @@
                                 <thead>
                                     <tr>
                                         <th>Testname</th>
-                                        <th>Tester</th>
+                                        <th>Feature</th>
+                                        <th>Elapsed</th>
                                         <th>Priority</th>
                                         <th>Result</th>
                                     </tr>

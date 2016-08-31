@@ -1,34 +1,69 @@
 <?php
-$test = $_GET["title"];
+$title = $_GET["title"];
 
 $host="localhost";
 $user="root";
 $password="";
 $db = "GlobalDB";
+$labelColor="";
 
+/* Connect to DB */
 $con=mysqli_connect($host,$user,$password, $db);
 
-/* check connection */
+/* Check DB connection */
 if (mysqli_connect_errno()) {
     printf("Connect failed: %s\n", mysqli_connect_error());
     exit();
 }
 
-$sqlGetApplicationData = "SELECT DISTINCT TESTED_ON, TESTER FROM TESTREPORTING WHERE TESTED_APPLICATION = 'CMP'";
+/* Get data from DB */
+$sqlGetApplicationData = "SELECT DISTINCT TESTRUN_NAME, TESTED_ON, TESTER FROM TESTREPORTING WHERE TESTED_APPLICATION ='".$title."'";
 $res = mysqli_query($con, $sqlGetApplicationData);
+$res2 = mysqli_query($con, $sqlGetApplicationData);
 
+/* Get data from DB for line chart */
+$sqlDataForChart = "SELECT COUNT(RESULT) AS COUNTER, TESTED_ON FROM TESTREPORTING WHERE RESULT = '"."Passed"."' GROUP BY TESTED_ON";
+$dataForChart = mysqli_query($con, $sqlDataForChart);
+
+/* Close DB connection */
 mysqli_close($con);
+
+$rows = array();
+while($r = $res2->fetch_assoc()) {
+$rows[] = $r['TESTED_ON'];
+}
+
+$rows2 = array();
+while($r = $dataForChart->fetch_assoc()) {
+    $rows2[] = $r;
+}
 
 function printReportTable()
 {
     global $res;
+    global $title;
     while ($row = $res->fetch_assoc()) {
         echo "<tr>";
-        echo "<td>", "<a href='ReportPageTest.php'>","CMP SPRINT 1","</a>", "</td>";
+        echo "<td>", "<a href='ReportPageTest.php?testrun=".$row['TESTRUN_NAME']."&title=".$title."'>",$row['TESTRUN_NAME'],"</a>", "</td>";
         echo "<td>", $row['TESTED_ON'], "</td>";
         echo "<td>", $row['TESTER'], "</td>";
         echo "</tr>";
     }
+}
+
+switch ($title) {
+    case "CMP":
+        $labelColor="primary";
+        break;
+    case "Client Portal":
+        $labelColor="green";
+        break;
+    case "Service Bank":
+        $labelColor="yellow";
+        break;
+    case "Tosca":
+        $labelColor="red";
+        break;
 }
 ?>
 
@@ -60,45 +95,6 @@ function printReportTable()
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-        google.charts.load('current', {'packages':['line']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-
-            var data = new google.visualization.DataTable();
-            data.addColumn('number', 'Day');
-            data.addColumn('number', 'Passed');
-            data.addColumn('number', 'Failed');
-
-
-            data.addRows([
-                [1, 4, 0],
-                [2, 3, 1],
-                [3, 3, 1],
-                [4, 4, 0],
-                [5, 2, 2],
-                [6, 4, 0]
-            ]);
-
-            var chartTitle = "";
-            chartTitle = <?php echo json_encode($test) ?>;
-
-            var options = {
-                chart: {
-                    title: chartTitle
-                },
-                width: 1000,
-                height: 300
-            };
-
-            var chart = new google.charts.Line(document.getElementById('linechart_material'));
-
-            chart.draw(data, options);
-        }
-    </script>
 
 </head>
 
@@ -141,8 +137,22 @@ function printReportTable()
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-                        <?php echo $test ?> Overview Test
+                        <?php echo $title ?> Overview
                     </h1>
+                </div>
+            </div>
+            <!-- /.row -->
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-<?php echo $labelColor ?>">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Summary of the last 10 days </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div id="morris_line_chart"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- /.row -->
@@ -163,7 +173,7 @@ function printReportTable()
                         <table class="table table-bordered table-hover table-striped">
                             <thead>
                                 <tr>
-                                    <th width="90%">Name</th>
+                                    <th width="90%">Testrun</th>
                                     <th width="50%">Datum</th>
                                     <th>Tester</th>
                                 </tr>
@@ -176,7 +186,8 @@ function printReportTable()
                     </table>
                 </div>
             </div>
-
+<?php print_r($rows[1]) ?>
+                <?php print_r($rows2[0]['COUNTER']) ?>
         </div>
         <!-- /.container-fluid -->
 
@@ -191,6 +202,27 @@ function printReportTable()
 
 <!-- Bootstrap Core JavaScript -->
 <script src="js/bootstrap.min.js"></script>
+
+<!-- Morris Charts JavaScript -->
+<script src="js/plugins/morris/raphael.min.js"></script>
+<script src="js/plugins/morris/morris.min.js"></script>
+<script>
+    new Morris.Line({
+        // ID of the element in which to draw the chart.
+        element: 'morris_line_chart',
+        // Chart data records -- each entry in this array corresponds to a point on
+        // the chart.
+        data: [
+            { datum: '<?php echo $rows[0] ?>', passed: 20, failed: 0 },
+            { datum: '<?php echo $rows[1] ?>', passed: 10, failed: 10 },
+        ],
+        xkey: 'datum',
+        ykeys: ['passed', 'failed'],
+        xLabels: 'day',
+        labels: ['Passed', 'Failed'],
+        lineColors: ['#34cb34', '#ff0000'],
+    });
+</script>
 
 </body>
 
