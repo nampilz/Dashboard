@@ -25,8 +25,9 @@ $res2 = mysqli_query($con, $sqlGetApplicationData);
 $sqlDataForChartPassed = "SELECT COUNT(RESULT) AS COUNTER, TESTED_ON FROM TESTREPORTING WHERE RESULT = '"."Passed"."'AND TESTED_APPLICATION = '".$title."' GROUP BY TESTED_ON DESC";
 $dataForChartPassed = mysqli_query($con, $sqlDataForChartPassed);
 
-$sqlDataForChartFailed = "SELECT COUNT(RESULT) AS COUNTER, TESTED_ON FROM TESTREPORTING WHERE RESULT = '"."Failed"."'AND TESTED_APPLICATION = '".$title."' GROUP BY TESTED_ON DESC";
-$dataForChartFailed = mysqli_query($con, $sqlDataForChartFailed);
+/* Get number of testcases */
+$sqlCountTestCases = "SELECT COUNT(RESULT) AS COUNTER, TESTED_ON FROM TESTREPORTING WHERE TESTED_APPLICATION = '".$title."' GROUP BY TESTED_ON DESC";
+$countTestCases = mysqli_query($con, $sqlCountTestCases);
 
 /* Close DB connection */
 mysqli_close($con);
@@ -37,14 +38,20 @@ while($r = $res2->fetch_assoc()) {
     $dateRow[] = $r['TESTED_ON'];
 }
 
-$dataPassed = array();
-while($r = $dataForChartPassed->fetch_assoc()) {
-    $dataPassed[] = $r['COUNTER'];
+/* Save number of testcases of each test run in an array */
+$countTestCasesArray = array();
+while($r = $countTestCases->fetch_assoc()) {
+    $countTestCasesArray[] = $r['COUNTER'];
 }
 
-$dataFailed = array();
-while($r = $dataForChartFailed->fetch_assoc()) {
-    $dataFailed[] = $r['COUNTER'];
+/* Get the number of passed and failed testcases */
+$numberFailed = array();
+$numberPassed = array();
+$c = 0;
+while($r = $dataForChartPassed->fetch_assoc()) {
+    $numberPassed[] = $r['COUNTER'];
+    $numberFailed[] = $countTestCasesArray[0] - $r['COUNTER']; // Number of Failed = total - number of passed
+    $c = $c+1;
 }
 
 
@@ -223,8 +230,17 @@ switch ($title) {
         // the chart.
 
         data: [
-            { datum: '<?php echo $dateRow[0] ?>', passed: <?php echo $dataPassed[0]?>, failed: <?php echo $dataFailed[0]?> },
-            { datum: '<?php echo $dateRow[1] ?>', passed: <?php echo $dataPassed[1]?>, failed: <?php echo $dataFailed[1]?> },
+            { datum: '<?php echo $dateRow[0] ?>', passed: <?php echo $numberPassed[0]?>, failed: <?php echo $numberFailed[0]?> },
+            { datum: '<?php echo $dateRow[1] ?>', passed: <?php echo $numberPassed[1]?>, failed: <?php echo $numberFailed[1]?> },
+            { datum: '<?php echo $dateRow[2] ?>', passed: <?php echo $numberPassed[2]?>, failed: <?php echo $numberFailed[2]?> },
+            { datum: '<?php echo $dateRow[3] ?>', passed: <?php echo $numberPassed[3]?>, failed: <?php echo $numberFailed[3]?> },
+            { datum: '<?php echo $dateRow[4] ?>', passed: <?php echo $numberPassed[4]?>, failed: <?php echo $numberFailed[4]?> },
+            { datum: '<?php echo $dateRow[5] ?>', passed: <?php echo $numberPassed[5]?>, failed: <?php echo $numberFailed[5]?> },
+            { datum: '<?php echo $dateRow[6] ?>', passed: <?php echo $numberPassed[6]?>, failed: <?php echo $numberFailed[6]?> },
+            { datum: '<?php echo $dateRow[7] ?>', passed: <?php echo $numberPassed[7]?>, failed: <?php echo $numberFailed[7]?> },
+            { datum: '<?php echo $dateRow[8] ?>', passed: <?php echo $numberPassed[8]?>, failed: <?php echo $numberFailed[8]?> },
+            { datum: '<?php echo $dateRow[9] ?>', passed: <?php echo $numberPassed[9]?>, failed: <?php echo $numberFailed[9]?> },
+
         ],
         xkey: 'datum',
         ykeys: ['passed', 'failed'],
